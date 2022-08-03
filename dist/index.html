@@ -7,6 +7,25 @@
     <title>to-do list</title>
   </head>
   <body>
+    <div id="left_panel">
+        <h2>Projects</h2>
+        <div class="folder" id="folder_completed">
+          <button class="folder_title">Completed</button>
+        </div>
+        <div id="folder_notCompleted" class="folder">
+          <button class="folder_title">Past due</button>
+        </div>
+        <form id="folder_form" method="post" id="form">
+          <input type="text" id="folder_title" required autocomplete="off" placeholder="Folder name" name="folder_name">
+          <button id="folder_submit" type="submit">Add folder</button>
+        </form>
+        <div id="folders"></div>
+      </div>
+    </div>
+    <div id="right_panel">
+      <h1>To do list</h1>
+      <button id="task_submit">Add task</button>
+    </div>
 	<script src="main.js"></script>
   </body>
 </html>

@@ -12,7 +12,7 @@ class Folder {
 }
 
 (() => {
-
+console.log(folderList)
 /*function removeFolder(remove_folder_btn) {
     let id = remove_folder_btn.id;
     let folders_div = document.querySelectorAll(".folder");
@@ -36,20 +36,35 @@ function redoID() {
         folderList[i].id = i;
     }
 }*/
-
 const folders_div = document.getElementById("folders");
 const left_panel = document.getElementById("left_panel");
-function showFolder() {
+
+if (localStorage.getItem('folders') === null) {
+    folderList = [];
+    console.log(folderList)
+  } else {
+    const foldersFromStorage = JSON.parse(localStorage.getItem('folders'));
+    folderList = foldersFromStorage;
+    console.log(folderList)
+    for(let i = 0; i < folderList.length; i++) {
+        showFolder(folderList[i]);
+    }
+  }
+
+
+function showFolder(folder) {
+    localStorage.clear();
+    localStorage.setItem('folders', JSON.stringify(folderList));
     left_panel.appendChild(folders_div);
     let folder_div = document.createElement("div");
     folder_div.classList.add("folder");
     folders_div.appendChild(folder_div);
     let folder_btn = document.createElement("button");
     if(folderList[folderList.length-1].title.split("").length > 12) {
-        folder_btn.innerText = folderList[folderList.length-1].title.slice(0, 12) + "...";
+        folder_btn.innerText = folder.title.slice(0, 12) + "...";
     }
     else {
-        folder_btn.innerText = folderList[folderList.length-1].title;
+        folder_btn.innerText = folder.title;
     }
     folder_btn.classList.add("folder_title");
     folder_div.appendChild(folder_btn);
@@ -76,7 +91,8 @@ function showFolder() {
             //console.log(folderList.filter(e => e.title !== remove_folder_btn.parentElement.parentElement.innerText))
             folderList = folderList.filter(e => e.title !== remove_folder_btn.parentElement.parentElement.innerText);
             remove_folder_btn.parentElement.parentElement.remove();
-            
+            localStorage.clear();
+            localStorage.setItem('folders', JSON.stringify(folderList));
         })
         
     })  
@@ -90,7 +106,7 @@ add_folder.addEventListener("click", (e) => {
         e.preventDefault();
         folderList.push(new Folder(title));
         title.value = "";
-        showFolder(); 
+        showFolder(folderList[folderList.length-1]); 
     }
 })
 

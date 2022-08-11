@@ -6,50 +6,24 @@ class Folder {
     constructor(title) {
         this.title = title.value;
         this.todos = [];
-
-      //  folderList.push(this);
     }
 }
 
 (() => {
-console.log(folderList)
-/*function removeFolder(remove_folder_btn) {
-    let id = remove_folder_btn.id;
-    let folders_div = document.querySelectorAll(".folder");
-    for(let i = 0; i < folders_div.length; i++) {
-        if(i === id) {
-            left_panel.removeChild(folders_div[i]);
-        }
-        folderList.splice(i, 1);
-    }
-    
-}
 
-function redoID() {
-    let folders_div = document.querySelectorAll(".folder");
-    for(let i = 0; i < folders_div.length; i++) {
-
-        console.log(folders_div[i]);
-        console.log(folderList);
-
-        folders_div[i].id = i;
-        folderList[i].id = i;
-    }
-}*/
 const folders_div = document.getElementById("folders");
 const left_panel = document.getElementById("left_panel");
 
 if (localStorage.getItem('folders') === null) {
     folderList = [];
-    console.log(folderList)
-  } else {
+  }
+else {
     const foldersFromStorage = JSON.parse(localStorage.getItem('folders'));
     folderList = foldersFromStorage;
-    console.log(folderList)
     for(let i = 0; i < folderList.length; i++) {
         showFolder(folderList[i]);
     }
-  }
+}
 
 
 function showFolder(folder) {
@@ -60,12 +34,6 @@ function showFolder(folder) {
     folder_div.classList.add("folder");
     folders_div.appendChild(folder_div);
     let folder_btn = document.createElement("button");
-    if(folderList[folderList.length-1].title.split("").length > 12) {
-        folder_btn.innerText = folder.title.slice(0, 12) + "...";
-    }
-    else {
-        folder_btn.innerText = folder.title;
-    }
     folder_btn.classList.add("folder_title");
     folder_div.appendChild(folder_btn);
     let btn_div = document.createElement("div");
@@ -80,23 +48,56 @@ function showFolder(folder) {
     btn_div.appendChild(remove_btn);
     remove_btn.style.backgroundImage = "url('../src/img/remove.svg')";
 
+    let edit_input = document.createElement("input");
+    folder_btn.appendChild(edit_input);
+    
+    edit_input.value = folder.title;
+    edit_input.readOnly = true;
 
-    let remove_folders_btn = document.querySelectorAll(".folder_remove");
-    remove_folders_btn.forEach(remove_folder_btn => {
-        remove_folder_btn.addEventListener("click", () => {
-            /*if(remove_folder_btn.id == folder_div.id) {
-                removeFolder(remove_folder_btn);
-                redoID();} */
-
-            //console.log(folderList.filter(e => e.title !== remove_folder_btn.parentElement.parentElement.innerText))
-            folderList = folderList.filter(e => e.title !== remove_folder_btn.parentElement.parentElement.innerText);
-            remove_folder_btn.parentElement.parentElement.remove();
+    remove_btn.addEventListener("click", (e) => {
+        let index = Array.from(e.target.parentElement.parentElement.parentElement.children).indexOf(e.target.parentElement.parentElement);
+        folderList = [].concat(folderList.slice(0, index), folderList.slice(index+1, folderList.length))
+        remove_btn.parentElement.parentElement.remove();
+        localStorage.clear();
+        localStorage.setItem('folders', JSON.stringify(folderList));
+    })
+        
+    let toggle = 1;
+    let value;
+    edit_btn.addEventListener("click", (e) => {
+        let index = Array.from(e.target.parentElement.parentElement.parentElement.children).indexOf(e.target.parentElement.parentElement);
+        if(toggle == 1) {
+            value = edit_input.value;
+            edit_input.readOnly = false;
+            edit_input.focus();
+            edit_btn.parentElement.firstChild.style.backgroundImage = "url('../src/img/done.svg')";
+            toggle = 0;
+        }
+        else {
+            edit_input.readOnly = true;
+            edit_btn.parentElement.firstChild.style.backgroundImage = "url('../src/img/edit.svg')";
+            toggle = 1;
+            folderList[index].title = edit_input.value;
             localStorage.clear();
             localStorage.setItem('folders', JSON.stringify(folderList));
-        })
-        
-    })  
-    console.log(folderList);
+        }
+    })
+
+    /*left_panel.addEventListener("click", () => {
+        const right_panel_h1 = document.getElementById("h1");
+        right_panel_h1.innerText = "To do list";
+        const tasks_div = document.getElementById("tasks");
+        tasks_div.innerHTML = "";
+    })*/
+
+    edit_input.addEventListener("click", () => {
+        if(edit_input.readOnly == true) {
+            const right_panel_h1 = document.getElementById("h1");
+            right_panel_h1.innerText = edit_input.value;
+        }
+    })
+
+    
 }
 
 const add_folder = document.getElementById("folder_submit");
@@ -110,22 +111,8 @@ add_folder.addEventListener("click", (e) => {
     }
 })
 
+//const add_task = document.getElementById("task_submit");
+
+
 })();
 
-/*function deleteFolder() {
-    
-}*/
-/*let remove_folders;
-const deleteFolder1 = (e) => {
-    e.parentElement.parentElement.remove();
-}
-remove_folders.forEach(remove_folder => {
-    console.log("b")
-    remove_folder.addEventListener("click", deleteFolder1);
-})*/
-
-
-
-
-
-//const add_task = document.getElementById("task_submit");

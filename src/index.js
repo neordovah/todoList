@@ -199,6 +199,12 @@ function showFolder(folder) {
             let tasks_div = document.getElementById("tasks")
             add_task_btn.hidden = true;
             tasks_div.innerHTML = "";
+            for(let i = 0; i < folderList[1].todos.length; i++) {
+                let toggle = 0;
+                let toggle2 = 1;
+                let toggle3 = 0;
+                showTask(1, i, toggle, toggle2, toggle3); 
+            } 
     })
 
 const add_folder = document.getElementById("folder_submit");
@@ -259,7 +265,7 @@ function showTask(index, i, toggle, toggle2, toggle3) {
     btn_div.appendChild(remove_btn);
     remove_btn.style.backgroundImage = "url('../src/img/remove.svg')";
 
-    if(index == 0) {
+    if(index == 0 || index == 1) {
         task_checkbox.remove();
         edit_btn.remove();
     }
@@ -365,25 +371,66 @@ add_task_btn.addEventListener("click", (e) => {
     
 })
 
-let today = new Date();
-console.log(today);
-let month = (today.getMonth()+1)
-if(month < 10) {
-    month = String(0) + month;
-}
-let day = today.getDate();
-if(today < 10) {
-    day = String(0) + day;
-}
+/*
 let year = today.getFullYear();
 console.log(year+'-'+month+'-'+day);
 console.log(month)
 console.log(day)
 console.log(year)
-console.log(folderList)
+console.log(folderList)*/
 
 //console.log(folderList[0].todos[0].date)
 //console.log(year+'-'+month+'-'+day == folderList[0].todos[0].date)
+    function reset() {
+        console.log("RESET")
+        let today = new Date();
+        let year = today.getFullYear();
+
+        let month = (today.getMonth()+1)
+        if(month < 10) {
+            month = String(0) + month;
+        }
+        let day = today.getDate();
+        if(today < 10) {
+            day = String(0) + day;
+        }
+        //console.log(year+'-'+month+'-'+day)
+       // console.log(folderList[2].todos[0].date)
+        for(let i = 2; i < folderList.length; i++) {
+            for(let j = 0; j < folderList[i].todos.length; j++) {
+                if(year+'-'+month+'-'+day > folderList[i].todos[j].date && folderList[i].todos[j].date !== "") {
+                    console.log("DA");
+                    folderList[1].todos.push(folderList[i].todos[j])
+                    folderList[i].todos = [].concat(folderList[i].todos.slice(0, j), folderList[i].todos.slice(j+1, folderList[i].todos.length))
+                    if(folderList[i].title == document.getElementById("h1")) {
+                        const tasks_div = document.getElementById("tasks");
+                        tasks_div.children[j].remove();
+                    }
+                    localStorage.clear();
+                    localStorage.setItem('folders', JSON.stringify(folderList));
+                }
+            }
+        }
+    }
+
+    function resetAtMidnight() {
+        var now = new Date();
+        var night = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() + 1, // the next day, ...
+            0, 0, 0 // ...at 00:00:00 hours
+        );
+        var msToMidnight = night.getTime() - now.getTime();
+    
+        setTimeout(function() {
+            reset();              //      <-- This is the function being called at midnight.
+            resetAtMidnight();    //      Then, reset again next midnight.
+        }, msToMidnight);
+    }
+
+    reset();
+    resetAtMidnight();
 
 })();
 

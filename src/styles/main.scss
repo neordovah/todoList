@@ -110,7 +110,7 @@ button {
 }
 
 #right_panel {
-    background-color: beige;
+    background-color: rgb(220, 220, 220);
     @include flexCenterCol();
     overflow-y: auto;
     padding: 10px 10px;
